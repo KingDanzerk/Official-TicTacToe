@@ -15,33 +15,55 @@ public enum GameStatus
     
 public class BoardLogic
 {
-    private Player _player1;
-    private Player _player2;
-    private Player[,] boardData;
+    private User _player1;
+    private User _player2;
+    private User[,] boardData;
     private int _spaceFilled = 0;
     private int _draws = 0;
-    private Player _currentPlayer;
-    public Player CurrentPlayer { get { return _currentPlayer; } }
+    private User _currentPlayer;
+    
+    public User FirstPlayer { get; protected set; }
+    public User CurrentPlayer { get { return _currentPlayer; } }
 
-    public BoardLogic(Player player1, Player player2)
+    public int Pieces { get { return _spaceFilled; } }
+    
+    public User OppositePlayerOfCurrent
     {
-        boardData = new Player[3, 3];
+        get
+        {
+
+            if (CurrentPlayer == _player1)
+            {
+                return _player2;
+            }
+
+            else
+            {
+                return _player1;
+            }
+        }
+    }
+    
+    public BoardLogic(User player1, User player2)
+    {
+        boardData = new User[3, 3];
         _player1 = player1;
         _player2 = player2;
         _currentPlayer = _player1;
+        FirstPlayer = _player1;
     }
 
     public void newBoard()
     {
-        boardData = new Player[3, 3];
+        boardData = new User[3, 3];
     }
         
-    public void AddSpace(Player currentplayer, int row, int column)
+    public void AddSpace(User currentplayer, int row, int column)
     {
         boardData[row, column] = currentplayer;
         _spaceFilled += 1;
     }
-        
+   
     public void SwitchPlayer()
     {
         _currentPlayer = _currentPlayer == _player1 ? _player2 : _player1;
@@ -204,6 +226,11 @@ public class BoardLogic
 
         return GameStatus.Contiue;
 
+    }
+
+    public User[,] returnBoardData()
+    {
+        return boardData;
     }
 }
 }

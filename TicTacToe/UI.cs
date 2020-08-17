@@ -21,7 +21,6 @@ public class UI
             }
         }
     }
-    
     public int RealRow
     {
         get
@@ -50,10 +49,16 @@ public class UI
         Console.WriteLine(board);
     }
 
-    public void AddSymbol(Player currentPlayer)
+    public void AddSymbol(User currentPlayer) //If this is for player
     {
         Console.SetCursorPosition(_column, _row);
         Console.Write(currentPlayer.PlayerSymbol);
+    }
+
+    public void AddSymbol(User currentPlayer, int x, int y) //If you have "RealCoordinates" for AI
+    {
+        Console.SetCursorPosition(y * 5, x * 2);
+        Console.WriteLine(currentPlayer.PlayerSymbol);
     }
 
     public void MoveCursor()
@@ -95,9 +100,9 @@ public class UI
                 break;
             }
         }
-    }
+    }//Allows Movement for a Player with Keyboard
 
-    public void resetCoordinates()
+    public void resetCoordinates() //Resets the the row 
     {
         _row = 0;
         _column = 0;

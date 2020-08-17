@@ -1,19 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace TicTacToe
 {
-public class Player
-{
-    public string Name { get; set; }
-    public int Wins { get; set; }
-    public Guid PlayerID { get; }
-    public char PlayerSymbol { get; }
-
-    public Player(Guid guid, char symbol)
+    public class Player : User
     {
-        Wins = 0;
-        PlayerID = guid;
-        PlayerSymbol = symbol;
+        public Player(Guid guid, char symbol) : base(guid, symbol)
+        {
+            Wins = 0;
+            PlayerID = guid;
+            PlayerSymbol = symbol;
+        }
     }
-}
 }
