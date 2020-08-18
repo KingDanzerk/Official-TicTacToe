@@ -13,11 +13,10 @@ class Program
         Player player1 = new Player(new Guid(), '$'); //All Users
         Player player2 = new Player(new Guid(), '%');
         AI robot = new AI(new Guid(), 'R');
-        
 
-        BoardLogic business = new BoardLogic(robot, player1); //First Player is ayeelways the first argument. 
+        BoardLogic business = new BoardLogic(player2, robot); //First Player is ayeelways the first argument. 
         UI userInterface = new UI();
-        AIBrain aiBrain = new AIBrain(business.FirstPlayer, robot, player1);
+        AIBrain aiBrain = new AIBrain(business.FirstPlayer, robot, player2); ;
         userInterface.PrintBoard();
         User[,] yeet = business.boardData;
 
@@ -39,7 +38,7 @@ class Program
 
             else
             {
-                (int x, int y) = aiBrain.BestMoveAI(business.returnBoardData(), business.Pieces, business.PlayerHistory);
+                (int x, int y) = aiBrain.BestMoveAI(business.returnBoardData(), business.Pieces, business.ReturnPlayerHistory(player2));
                 userInterface.AddSymbol(robot, x, y);
                 business.AddSpace(robot, x, y);
                 aiBrain.SaveLastMoves(x, y);

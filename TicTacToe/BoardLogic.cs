@@ -22,9 +22,13 @@ public enum GameStatus
         private int _spaceFilled = 0;
         private int _draws = 0;
         private User _currentPlayer;
-        private List<(int x, int y)> _playerHistory = new List<(int x, int y)>();
-        public List<(int x, int y)> PlayerHistory { get { return _playerHistory; }}
-        
+        private List<(int x, int y)> _history = new List<(int x, int y)>();
+        private List<(int x, int y)> _human1History = new List<(int x, int y)>();
+        private List<(int x, int y)> _human2History = new List<(int x, int y)>();
+        private List<(int x, int y)> _AIHistory = new List<(int x, int y)>();
+
+        public List<(int x, int y)> History { get { return _history; } }
+
         public (int x, int y) PlayerLastMove { get; protected set; }
         
         public User FirstPlayer { get; protected set; }
@@ -68,7 +72,34 @@ public enum GameStatus
         {
             boardData[row, column] = currentplayer;
             PlayerLastMove = (row, column);
-                _playerHistory.Add((row, column));
+            _history.Add((row, column));
+           
+            if (currentplayer == _player1)
+            {
+                if (_player1 is Player)
+                {
+                    _human1History.Add((row, column));
+                }
+
+                if (_player1 is AI)
+                {
+                    _AIHistory.Add((row, column));
+                }
+            }
+
+            if (currentplayer == _player2)
+            {
+                if (_player2 is Player)
+                {
+                    _human2History.Add((row, column));
+                }
+
+                if (_player2 is AI)
+                {
+                    _AIHistory.Add((row, column));
+                }
+            }
+           
             _spaceFilled += 1;
         }
    
@@ -239,6 +270,32 @@ public enum GameStatus
         public User[,] returnBoardData()
         {
             return boardData;
+        }
+
+        public List<(int x, int y)> ReturnPlayerHistory(User player)
+        {
+            if (player == FirstPlayer)
+            {
+                if (player is Player)
+                {
+                    return _human1History;
+                }
+
+                if (player is AI)
+                {
+                    return _AIHistory;
+                }
+            }
+
+            if (player != FirstPlayer)
+            {
+                if (player is Player)
+                {
+                    return _human2History;
+                }
+            }
+
+            return _AIHistory;
         }
 }
 }

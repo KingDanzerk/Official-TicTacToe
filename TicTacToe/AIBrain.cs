@@ -25,17 +25,34 @@ namespace TicTacToe
             {
                 return GetAcross(_AIHistory.Last());
             }
-        }
+        } //Gets move across from move inputted
 
-        public AIBrain(User firstplayer, AI robot, Player enemy)
+        public AIBrain(User firstplayer, AI robot, Player enemy) 
         {
             _firstPlayer = firstplayer;
             _AI = robot;
             _enemy = enemy;
         }
 
+        public (int x, int y) BestMoveAI(User[,] data, int amountOfPieces, List<(int x, int y)> enemyMoves)
+        {
+            if (_AI == _firstPlayer)
+            {
+                return OffenseCorner(data, amountOfPieces, enemyMoves);
+            }
 
-        public (int x, int y) CheckAIEmptySpaces(User[,] data, int amountOfPieces)
+            else
+            {
+                return P2Hard(data, amountOfPieces, enemyMoves);
+            }
+        } //Returns the next best move for AI
+
+        public void SaveLastMoves(int x, int y)
+        {
+            _AIHistory.Add((x, y));
+        } //SavesLastMove
+
+        private (int x, int y) CheckAIEmptySpaces(User[,] data, int amountOfPieces)
         {
             int row = 0;
             int column = 0;
@@ -140,9 +157,9 @@ namespace TicTacToe
             }//ChecksAI
 
             return (-1, -1);
-        }
+        } //Checks for a AI win
 
-        public (int x, int y) CheckEnemyEmptySpaces(User[,] data, int amountOfPieces)
+        private (int x, int y) CheckEnemyEmptySpaces(User[,] data, int amountOfPieces)
         {
             int row = 0;
             int column = 0;
@@ -252,28 +269,8 @@ namespace TicTacToe
             } //ChecksEnemy
 
             return (-1, -1);
-        }
+        } //Checks for a enemy win
 
-        public (int x, int y) BestMoveAI(User[,] data, int amountOfPieces, List<(int x, int y)> enemyMoves)
-        {
-            //if (_AI == _firstPlayer)
-            //{
-            //    
-            //}
-
-            //else
-            //{
-            //    return
-            //}
-            return OffenseCorner(data, amountOfPieces, enemyMoves);
-
-
-        }
-
-        public void SaveLastMoves(int x, int y)
-        {
-            _AIHistory.Add((x, y));
-        }
         private (int x, int y) OffenseCorner(User[,] data, int amountOfPieces, List <(int x, int y)> enemyMoves)
         {
             (int x, int y) EnemyAttack = CheckEnemyEmptySpaces(data, amountOfPieces);
@@ -315,20 +312,202 @@ namespace TicTacToe
 
             return RandomEmptyCorner(_AIHistory, enemyMoves);
 
-        }
+        } //1st player strategy
 
-        private (int x, int y) SecondPlayer(User[,] data, int amountOfPieces, List<(int x, int y)> enemyMoves)
+        private (int x, int y) P2Hard(User[,] data, int amountOfPieces, List<(int x, int y)> enemyMoves)
         {
-            if (CheckCorners(data) == true && amountOfPieces == 1)
+            (int x, int y) EnemyAttack = CheckEnemyEmptySpaces(data, amountOfPieces);
+            (int x, int y) AIAttack = CheckAIEmptySpaces(data, amountOfPieces);
+            List<(int x, int y)> TakenCorners;
+            List<(int x, int y)> TakenMiddle;
+            int checkCorners = TryCorners(data, out TakenCorners);
+            int checkMiddle = TryMiddle(data, out TakenMiddle);
+
+
+            if (_AI != _firstPlayer && amountOfPieces == 1)
             {
-                return (1, 1);
+
+                if (data[1,1] == null)
+                {
+                    return (1, 1);
+                }
+
+                else
+                {
+                    return RandomEmptyCorner(_AIHistory, enemyMoves);
+                }
             }
 
-            return(0,0);
-        }
-        private bool CheckCorners(User[,] data)
+            if (_AI != _firstPlayer && amountOfPieces <= 4)
+            {
+
+                if (EnemyAttack != (-1, -1))
+                {
+                    return EnemyAttack;
+                }
+                
+                if (checkCorners == 3)
+                {
+                    return BlockCornerToMiddle(enemyMoves);
+                }
+
+                if (checkMiddle == 2)
+                {
+                    return DoubleCorner(enemyMoves);
+                }
+
+            }
+
+            if (_AI != _firstPlayer && amountOfPieces >= 5)
+            {
+                if (EnemyAttack != (-1,-1))
+                {
+                    return EnemyAttack;
+                }
+
+                if (AIAttack != (-1,-1))
+                {
+                    return AIAttack;
+                }
+                
+                if (checkMiddle == 0)
+                {
+                    return RandomEmptyCorner(_AIHistory, enemyMoves);
+                }
+            }
+
+            return RandomEmptyMiddle(_AIHistory, enemyMoves);
+
+        } //2nd player strategy Hard Mode
+
+        private (int x, int y) P2Medium(User[,] data, int amountOfPieces, List<(int x, int y)> enemyMoves)
+        {
+            (int x, int y) EnemyAttack = CheckEnemyEmptySpaces(data, amountOfPieces);
+            (int x, int y) AIAttack = CheckAIEmptySpaces(data, amountOfPieces);
+            List<(int x, int y)> TakenCorners;
+            List<(int x, int y)> TakenMiddle;
+            int checkCorners = TryCorners(data, out TakenCorners);
+            int checkMiddle = TryMiddle(data, out TakenMiddle);
+            Random randomizer = new Random();
+            int randomFactor = randomizer.Next(2);
+
+            if (_AI != _firstPlayer && amountOfPieces == 1)
+            {
+
+                if (data[1, 1] == null)
+                {
+                    return (1, 1);
+                }
+
+                else
+                {
+                    return RandomEmptyCorner(_AIHistory, enemyMoves);
+                }
+            }
+
+            if (_AI != _firstPlayer && amountOfPieces <= 4)
+            {
+
+                if (EnemyAttack != (-1, -1))
+                {
+                    return EnemyAttack;
+                }
+
+                if (checkCorners == 3 && randomFactor == 2)
+                {
+                    return BlockCornerToMiddle(enemyMoves);
+                }
+
+                if (checkMiddle == 2 && randomFactor == 1)
+                {
+                    return DoubleCorner(enemyMoves);
+                }
+
+            }
+
+            if (_AI != _firstPlayer && amountOfPieces >= 5)
+            {
+                if (EnemyAttack != (-1, -1))
+                {
+                    return EnemyAttack;
+                }
+
+                if (AIAttack != (-1, -1))
+                {
+                    return AIAttack;
+                }
+
+                if (checkMiddle == 0)
+                {
+                    return RandomEmptyCorner(_AIHistory, enemyMoves);
+                }
+            }
+
+            return RandomEmptyMiddle(_AIHistory, enemyMoves);
+
+        } //2nd player strategy Medium
+
+        private (int x, int y) P2Easy(User[,] data, int amountOfPieces, List<(int x, int y)> enemyMoves)
+        {
+            (int x, int y) EnemyAttack = CheckEnemyEmptySpaces(data, amountOfPieces);
+            (int x, int y) AIAttack = CheckAIEmptySpaces(data, amountOfPieces);
+            List<(int x, int y)> TakenCorners;
+            List<(int x, int y)> TakenMiddle;
+            int checkCorners = TryCorners(data, out TakenCorners);
+            int checkMiddle = TryMiddle(data, out TakenMiddle);
+            Random randomizer = new Random();
+            int randomFactor = randomizer.Next(2);
+
+            if (_AI != _firstPlayer && amountOfPieces == 1)
+            {
+
+                if (data[1, 1] == null)
+                {
+                    return (1, 1);
+                }
+
+                else
+                {
+                    return RandomEmptyCorner(_AIHistory, enemyMoves);
+                }
+            }
+
+            if (_AI != _firstPlayer && amountOfPieces <= 4)
+            {
+
+                if (EnemyAttack != (-1, -1))
+                {
+                    return EnemyAttack;
+                }
+
+            }
+
+            if (_AI != _firstPlayer && amountOfPieces >= 5)
+            {
+                if (EnemyAttack != (-1, -1))
+                {
+                    return EnemyAttack;
+                }
+
+                if (AIAttack != (-1, -1))
+                {
+                    return AIAttack;
+                }
+
+                if (checkMiddle == 0)
+                {
+                    return RandomEmptyCorner(_AIHistory, enemyMoves);
+                }
+            }
+
+            return RandomEmptyMiddle(_AIHistory, enemyMoves);
+
+        } 
+
+        private int TryCorners(User[,] data, out List<(int x, int y)> taken)
         {
             List<(int x, int y)> randomCorner = new List<(int x, int y)> { (0, 0), (2, 0), (0, 2), (2, 2) };
+            taken = new List<(int x, int y)>();
             int count = 0;
 
             for (int i = 0; i < randomCorner.Count; i++)
@@ -337,18 +516,157 @@ namespace TicTacToe
                 {
                     count += 1;
                 }
+
+                else
+                {
+                    taken.Add(randomCorner[i]);
+                }
             }
 
-            if (count == 4)
+            return count;
+            
+        } //Checks if  any corner is taken
+
+        private int TryMiddle(User[,] data, out List<(int x, int y)> taken)
+        {
+            List<(int x, int y)> randomMiddle = new List<(int x, int y)> { (0, 1), (1, 2), (2, 1), (1, 0) };
+            taken = new List<(int x, int y)>();
+            int count = 0;
+
+            for (int i = 0; i < randomMiddle.Count; i++)
             {
-                return true;
+                if (data[randomMiddle[i].x, randomMiddle[i].y] == null)
+                {
+                    count += 1;
+                }
+
+                else
+                {
+                    taken.Add(randomMiddle[i]);
+                }
             }
 
-            else
+            return count;
+
+        } //Checks if any middle piece is taken
+
+        private (int x, int y) BlockCornerToMiddle(List<(int x, int y)> enemyLastmoves) 
+        {
+
+            if (enemyLastmoves[0] == (0,0))
             {
-                return false;
+                if (enemyLastmoves[1] == (2,1))
+                {
+                    return (2, 0);
+                }
+
+                if (enemyLastmoves[1] == (1,2))
+                {
+                    return (0, 2);
+                }
+
+            }
+
+            if (enemyLastmoves[0] == (0,2))
+            {
+                if (enemyLastmoves[1] == (2,1))
+                {
+                    return (2, 2);
+                }
+
+                if (enemyLastmoves[1] == (1,0))
+                {
+                    return (0, 0);
+                }
+            }
+
+            if (enemyLastmoves[0] == (2,2))
+            {
+                if (enemyLastmoves[1] == (0,1))
+                {
+                    return (0, 2);
+                }
+
+                if (enemyLastmoves[1] == (1,0))
+                {
+                    return (2, 0);
+                }
+            }
+
+            if (enemyLastmoves[0] == (2,0))
+            {
+                if (enemyLastmoves[1] == (0,1))
+                {
+                    return (0, 0);
+                }
+
+                if (enemyLastmoves[1] == (1,2))
+                {
+                    return (2, 2);
+                }
             }
             
+            return RandomEmptyMiddle(_AIHistory, enemyLastmoves);
+            
+        } //CornerMiddlePLay
+
+        private(int x, int y) DoubleCorner(List<(int x, int y)> enemyLastMoves)
+        {
+
+            if (enemyLastMoves[0] == (1,0))
+            {
+                if (enemyLastMoves[1] == (2,1))
+                {
+                    return (2, 0);
+                }
+
+                if (enemyLastMoves[1] == (0,1))
+                {
+                    return (0, 0);
+                }
+            }
+
+            if (enemyLastMoves[0] == (2,1))
+            {
+                if (enemyLastMoves[1] == (1,0))
+                {
+                    return (2, 0);
+                }
+
+                if (enemyLastMoves[1] == (1,2))
+                {
+                    return (2, 2);
+                }
+            }
+
+            if (enemyLastMoves[0] == (1,2))
+            {
+                if (enemyLastMoves[1] == (2,1))
+                {
+                    return (2,2);
+                }
+
+                if (enemyLastMoves[1] == (0,1))
+                {
+                    return (0, 2);
+                }
+            }
+
+            if (enemyLastMoves[0] == (0,1))
+            {
+                if (enemyLastMoves[1] == (1,0))
+                {
+                    return (0, 0);
+                }
+
+                if (enemyLastMoves[1] == (1,2))
+                {
+                    return (0, 2);
+                }
+            }
+
+            return RandomEmptyCorner(_AIHistory, enemyLastMoves);
+
         }
 
         private (int x, int y) GetAcross((int x, int y) input)
@@ -437,8 +755,17 @@ namespace TicTacToe
                 }
             }
 
+            if (randomMiddle.Count == 0)
+            {
+                return (-1, -1);
+            }
+
             return randomMiddle[randomNumber.Next(randomMiddle.Count)];
         } //Gets a random empty middle
-        //Returns the next best move for AI
+
+
+                
+
+
     }
 }
