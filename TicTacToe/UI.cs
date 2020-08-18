@@ -2,7 +2,7 @@
 
 namespace TicTacToe
 {
-public class UI
+public class UI //Handles the console User Interface
 {
     private int _row = 0;
     private int _column = 0;
