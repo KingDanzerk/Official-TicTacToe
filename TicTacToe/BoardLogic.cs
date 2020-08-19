@@ -27,16 +27,45 @@ public enum GameStatus
         private List<(int x, int y)> _human2History = new List<(int x, int y)>();
         private List<(int x, int y)> _AIHistory = new List<(int x, int y)>();
 
+        /// <summary>
+        /// Returns history of all players
+        /// </summary>
+        /// 
+
         public List<(int x, int y)> History { get { return _history; } }
+        
+        /// <summary>
+        /// Returns last move.
+        /// </summary>
+        /// 
 
         public (int x, int y) PlayerLastMove { get; protected set; }
         
+        /// <summary>
+        /// Returns the first player of the game
+        /// </summary>
+        /// 
+        
         public User FirstPlayer { get; protected set; }
+
+        /// <summary>
+        /// Returns the current player
+        /// </summary>
     
         public User CurrentPlayer { get { return _currentPlayer; } }
 
+        /// <summary>
+        /// Returns how many pieces on the board.
+        /// </summary>
+        /// 
+
         public int Pieces { get { return _spaceFilled; } }
     
+        /// <summary>
+        /// Returns opposite player of current player
+        /// </summary>
+        /// 
+
         public User OppositePlayerOfCurrent
         {
             get
@@ -54,6 +83,13 @@ public enum GameStatus
             }
         }
     
+        /// <summary>
+        /// Creates game, first argument == first player, second argument == player 2
+        /// </summary>
+        /// <param name="player1"></param>
+        /// <param name="player2"></param>
+        /// 
+
         public BoardLogic(User player1, User player2)
         {
             boardData = new User[3, 3];
@@ -63,10 +99,22 @@ public enum GameStatus
             FirstPlayer = _player1;
         }
 
+        /// <summary>
+        /// creates a new board
+        /// </summary>
+        /// 
+
         public void newBoard()
         {
             boardData = new User[3, 3];
         }
+
+        /// <summary>
+        /// Adds that player onto the board data
+        /// </summary>
+        /// <param name="currentplayer"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         
         public void AddSpace(User currentplayer, int row, int column)
         {
@@ -103,13 +151,31 @@ public enum GameStatus
             _spaceFilled += 1;
         }
    
+        /// <summary>
+        /// Switches the current player
+        /// </summary>
+        /// 
+
         public void SwitchPlayer()
         {
             _currentPlayer = _currentPlayer == _player1 ? _player2 : _player1;
         }
 
+        /// <summary>
+        /// Checks if a space is filled or not
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        /// 
+
         public bool SpaceFilled(int row, int column) => boardData[row, column] != null;
 
+        /// <summary>
+        /// Checks for a win, draw or continue
+        /// </summary>
+        /// <returns></returns>
+        /// 
         public GameStatus CheckGameStatus()
         {
             // Columns
@@ -267,10 +333,22 @@ public enum GameStatus
 
         }
 
+        /// <summary>
+        /// Returns board information
+        /// </summary>
+        /// <returns></returns>
+        /// 
+
         public User[,] returnBoardData()
         {
             return boardData;
         }
+
+        /// <summary>
+        /// Returns a players history
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
 
         public List<(int x, int y)> ReturnPlayerHistory(User player)
         {
