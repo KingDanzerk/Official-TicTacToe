@@ -8,7 +8,7 @@ namespace TicTacToe
     {
         public void DisplayWinsandDraws(User player1, User player2, int draws)
         {
-            Console.SetCursorPosition(16, 0);
+            Console.SetCursorPosition(14, 0);
             Console.WriteLine($"{player1.Name} <{player1.PlayerSymbol}> Wins: {player1.Wins} - Draws: {draws} - {player2.Name} <{player2.PlayerSymbol}> Wins: {player2.Wins}");
         }
 
@@ -18,5 +18,11 @@ namespace TicTacToe
             ConsoleKeyInfo input = Console.ReadKey();
             return input.Key;
         }
+
+        public void SetBoardWindowSize()
+        {
+            Console.SetWindowSize(60, 10);
+        }
+
     }
 }

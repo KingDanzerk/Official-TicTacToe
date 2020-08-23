@@ -12,13 +12,15 @@ class Program
     {
 
         GameModes gameMode = new GameModes();
+        Displays displays = new Displays();
+        UI userInterface = new UI();
+
         gameMode.DisplayGameModes();
         BoardLogic business = gameMode.GameMode();
         Console.Clear();
-        Displays displays = new Displays();
-        UI userInterface = new UI();
         userInterface.PrintBoard();
-6        while (true)
+        
+        while (true)
         {
 
             if (business.CheckGameStatus() != GameStatus.Contiue)
@@ -41,9 +43,9 @@ class Program
                 
             }
 
+            displays.SetBoardWindowSize();
             displays.DisplayWinsandDraws(business.Player1, business.Player2, business.Draws);
-
-
+            
             if (!(business.CurrentPlayer is AI))
             {
                 userInterface.MoveCursor();
