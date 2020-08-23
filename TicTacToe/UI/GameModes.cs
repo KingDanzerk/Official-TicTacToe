@@ -4,8 +4,15 @@ using System.Text;
 
 namespace TicTacToe
 {
-    class GameModes
+    public class GameModes
     {
+        public void DisplayGameModes()
+        {
+            Console.WriteLine("Welcome to Tic Tac Toe!");
+            Console.WriteLine("");
+            Console.WriteLine("Pick a gamemode!");
+            Console.WriteLine("1. Player vs Player \n2. Player vs AI");
+        }
         public BoardLogic GameMode()
         {
             Player player1 = new Player(new Guid(), 'X');
@@ -30,7 +37,7 @@ namespace TicTacToe
                 char player2Symb = AskForSymbol("Player 2", player2);
                 player2 = new Player(new Guid(), player2Symb);
                 AskForName("Player 2", player2);
-
+                
                 BoardLogic gameMode1 = new BoardLogic(player1, player2);
 
                 return gameMode1;
@@ -42,7 +49,6 @@ namespace TicTacToe
                 char player1Symb = AskForSymbol("Player 1", player1);
                 player1 = new Player(new Guid(), player1Symb);
                 AskForName("Player 1", player1);
-
                 robot = new AI(new Guid(), 'R', player1);
 
             }

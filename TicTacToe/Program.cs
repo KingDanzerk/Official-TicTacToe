@@ -12,19 +12,36 @@ class Program
     {
 
         GameModes gameMode = new GameModes();
+        gameMode.DisplayGameModes();
         BoardLogic business = gameMode.GameMode();
+        Console.Clear();
+        Displays displays = new Displays();
         UI userInterface = new UI();
         userInterface.PrintBoard();
-
-        while (true)
+6        while (true)
         {
 
             if (business.CheckGameStatus() != GameStatus.Contiue)
             {
                 Console.Clear();
-                userInterface.PrintBoard();
-                business.ResetGame();
+                ConsoleKey AskInput = displays.AskToRestartOrEnd();
+
+                if (AskInput == ConsoleKey.R)
+                {
+                    Console.Clear();
+                    userInterface.PrintBoard();
+                    business.ResetGame();
+                }
+
+                if (AskInput == ConsoleKey.Enter)
+                {
+                    Console.WriteLine("Press Enter Again to end!");
+                    break;
+                }
+                
             }
+
+            displays.DisplayWinsandDraws(business.Player1, business.Player2, business.Draws);
 
 
             if (!(business.CurrentPlayer is AI))
@@ -43,7 +60,7 @@ class Program
 
             else
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
                 (int x, int y) = business.AIPlayer.Brain.BestMoveAI(business.returnBoardData(),business.FirstPlayer, business.Pieces, business.ReturnPlayerHistory(business.OppositePlayerOfCurrent));
                 userInterface.AddSymbol(business.AIPlayer, x, y);
                 business.AddSpace(business.AIPlayer, x, y);

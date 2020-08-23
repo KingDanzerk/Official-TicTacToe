@@ -28,6 +28,12 @@ public enum GameStatus
         private List<(int x, int y)> _human2History = new List<(int x, int y)>();
         private List<(int x, int y)> _AIHistory = new List<(int x, int y)>();
 
+        public int Draws { get { return _draws; } }
+
+        public User Player1 { get { return _player1; } }
+
+        public User Player2 { get { return _player2; } }
+
         public AI AIPlayer { get { return GetAI(); } }
 
         /// <summary>
@@ -368,6 +374,7 @@ public enum GameStatus
             {
                 if (_spaceFilled == 9)
                 {
+                    _draws += 1;
                     return GameStatus.Draw;
                 }
             }
