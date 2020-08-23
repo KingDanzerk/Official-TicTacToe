@@ -18,14 +18,17 @@ public enum GameStatus
     {
         private User _player1;
         private User _player2;
-        public User[,] boardData;
+        private User[,] boardData;
         private int _spaceFilled = 0;
         private int _draws = 0;
         private User _currentPlayer;
+        private User _firstPlayer;
         private List<(int x, int y)> _history = new List<(int x, int y)>();
         private List<(int x, int y)> _human1History = new List<(int x, int y)>();
         private List<(int x, int y)> _human2History = new List<(int x, int y)>();
         private List<(int x, int y)> _AIHistory = new List<(int x, int y)>();
+
+        public AI AIPlayer { get { return GetAI(); } }
 
         /// <summary>
         /// Returns history of all players
@@ -46,7 +49,7 @@ public enum GameStatus
         /// </summary>
         /// 
         
-        public User FirstPlayer { get; protected set; }
+        public User FirstPlayer { get { return _firstPlayer; } protected set { } }
 
         /// <summary>
         /// Returns the current player
@@ -96,7 +99,7 @@ public enum GameStatus
             _player1 = player1;
             _player2 = player2;
             _currentPlayer = _player1;
-            FirstPlayer = _player1;
+            _firstPlayer = _player1;
         }
 
         /// <summary>
@@ -104,10 +107,50 @@ public enum GameStatus
         /// </summary>
         /// 
 
-        public void newBoard()
+        public void ResetGame()
+        {
+            newBoard();
+            SwitchFirstPlayer();
+            ResetHistory();
+            _spaceFilled = 0;
+            _currentPlayer = FirstPlayer;
+        }
+
+        private void SwitchFirstPlayer()
+        {
+            _firstPlayer = _firstPlayer == _player1 ? _player2 : _player1;
+        }
+        private  void ResetHistory()
+        {
+            _AIHistory = new List<(int x, int y)>();
+            _human1History = new List<(int x, int y)>();
+            _human2History = new List<(int x, int y)>();
+            _history = new List<(int x, int y)>();
+        }
+
+
+        private void newBoard()
         {
             boardData = new User[3, 3];
         }
+
+        public AI GetAI()
+        {
+            if (_player1 is AI)
+            {
+                return (AI)_player1;
+            }
+
+            if (_player2 is AI)
+            {
+                return (AI)_player2;
+            }
+
+            else
+            {
+                return null;
+            }
+        } 
 
         /// <summary>
         /// Adds that player onto the board data

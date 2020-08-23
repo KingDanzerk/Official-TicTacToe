@@ -10,19 +10,24 @@ class Program
 {
     static void Main(string[] args)
     {
-        Player player1 = new Player(new Guid(), '$'); 
-        Player player2 = new Player(new Guid(), '%');
-        AI robot = new AI(new Guid(), 'R');
 
-        BoardLogic business = new BoardLogic(player1, robot); //First Player is always the first argument. 
+        GameModes gameMode = new GameModes();
+        BoardLogic business = gameMode.GameMode();
         UI userInterface = new UI();
-        AIBrain aiBrain = new AIBrain(business.FirstPlayer, robot, player1); //Enter the right player if use of AI is wanted.
         userInterface.PrintBoard();
-        User[,] yeet = business.boardData;
 
-        while (business.CheckGameStatus() == GameStatus.Contiue)
+        while (true)
         {
-            if (business.CurrentPlayer != robot)
+
+            if (business.CheckGameStatus() != GameStatus.Contiue)
+            {
+                Console.Clear();
+                userInterface.PrintBoard();
+                business.ResetGame();
+            }
+
+
+            if (!(business.CurrentPlayer is AI))
             {
                 userInterface.MoveCursor();
 
@@ -38,12 +43,14 @@ class Program
 
             else
             {
-                (int x, int y) = aiBrain.BestMoveAI(business.returnBoardData(), business.Pieces, business.ReturnPlayerHistory(business.OppositePlayerOfCurrent));
-                userInterface.AddSymbol(robot, x, y);
-                business.AddSpace(robot, x, y);
-                aiBrain.SaveLastMoves(x, y);
+                Thread.Sleep(1000);
+                (int x, int y) = business.AIPlayer.Brain.BestMoveAI(business.returnBoardData(),business.FirstPlayer, business.Pieces, business.ReturnPlayerHistory(business.OppositePlayerOfCurrent));
+                userInterface.AddSymbol(business.AIPlayer, x, y);
+                business.AddSpace(business.AIPlayer, x, y);
+                business.AIPlayer.Brain.SaveLastMoves(x, y);
                 business.SwitchPlayer();
             }
+            
         }
 
             Console.Read();
